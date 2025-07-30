@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robo-Ranking Pro</title>
+    <title>UNI presença</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -24,14 +24,6 @@
                 transform: translateY(0);
             }
         }
-        .drop-zone {
-            border: 3px dashed #cbd5e1;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-        .drop-zone.dragover {
-            background-color: #eef2ff;
-            border-color: #4f46e5;
-        }
         .loader {
             border: 5px solid #e5e7eb;
             border-top: 5px solid #4f46e5;
@@ -44,135 +36,74 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        @keyframes fade-in-out {
-            0%, 100% { opacity: 0; transform: translateY(-20px); }
-            10%, 90% { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fade-in-out {
-            animation: fade-in-out 4s ease-in-out forwards;
-        }
     </style>
 </head>
 <body class="antialiased">
 
     <div class="container mx-auto p-4 sm:p-6 lg:p-8">
         <header class="text-center mb-8">
-            <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Robo-Ranking Pro</h1>
-            <p class="text-slate-500 mt-2 text-lg">Acumule presenças e veja sua equipe de robôs dominar!</p>
+            <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-black-600">UNI</h1>
+            <p class="text-slate-500 mt-2 text-lg">Ranking de presença</p>
         </header>
 
-        <section id="main-controls" class="max-w-3xl mx-auto bg-white p-6 rounded-xl shadow-lg mb-10">
-            <div id="drop-zone" class="drop-zone w-full p-8 text-center rounded-lg cursor-pointer">
-                <input type="file" id="csv-files" multiple accept=".csv" class="hidden">
-                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                <p class="mt-2 text-slate-600">Arraste e solte os arquivos CSV ou <span class="font-semibold text-indigo-600">clique aqui</span>.</p>
-                <p id="file-list" class="mt-2 text-sm text-slate-500">Nenhum arquivo processado nesta sessão.</p>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <button id="reset-btn" class="flex items-center justify-center w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 transition-colors">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                    Limpar e Recomeçar
-                </button>
-                <button id="process-btn" class="flex items-center justify-center w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-slate-400 disabled:cursor-not-allowed" disabled>
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Adicionar e Atualizar
-                </button>
-            </div>
-        </section>
-
         <main id="results-section">
-            <div id="loading-spinner" class="hidden justify-center items-center flex-col my-10">
+            <div id="loading-spinner" class="flex justify-center items-center flex-col my-10">
                 <div class="loader"></div>
                 <p class="mt-4 text-slate-600">Calculando presenças...</p>
             </div>
-            <div id="empty-state" class="text-center py-10 px-6 bg-white rounded-lg shadow-md">
-                <h3 class="text-xl font-semibold text-gray-700">Seu ranking aparecerá aqui!</h3>
-                <p class="text-gray-500 mt-2">Comece fazendo o upload dos seus arquivos de presença.</p>
-            </div>
             <div id="ranked-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- O ranking será inserido aqui -->
             </div>
         </main>
     </div>
 
     <script>
         // --- DOM ELEMENTS ---
-        const mainControls = document.getElementById('main-controls');
-        const dropZone = document.getElementById('drop-zone');
-        const fileInput = document.getElementById('csv-files');
-        const fileListDisplay = document.getElementById('file-list');
-        const processBtn = document.getElementById('process-btn');
-        const resetBtn = document.getElementById('reset-btn');
         const rankedListContainer = document.getElementById('ranked-list');
         const loadingSpinner = document.getElementById('loading-spinner');
-        const emptyState = document.getElementById('empty-state');
 
         // --- GLOBAL STATE ---
         let masterPresenceData = new Map();
-        let processedFileNames = new Set();
         
-        // --- INITIALIZATION ---
-        // Não precisamos mais de uma inicialização complexa.
-        document.addEventListener('DOMContentLoaded', () => {
-             mainControls.style.display = 'block';
-        });
+        // --- CONFIGURAÇÃO ---
+        // Lista de arquivos CSV que serão carregados pelo site.
+        const csvFilePaths = [
+            'UNI - Presença Março.csv',
+            'UNI - Presença Abril.csv',
+            'UNI - Presença Maio.csv',
+            'UNI - Presença Junho.csv',
+            'UNI - Presença Julho.csv'
+        ];
 
-        // --- EVENT HANDLERS ---
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            if (e.dataTransfer.files.length) {
-                fileInput.files = e.dataTransfer.files;
-                processBtn.disabled = false;
-            }
-        });
-        fileInput.addEventListener('change', () => {
-            processBtn.disabled = fileInput.files.length === 0;
-        });
-        processBtn.addEventListener('click', handleProcessRequest);
-        resetBtn.addEventListener('click', handleResetRequest);
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', initializeAndProcessData);
 
         // --- CORE FUNCTIONS ---
-        function handleResetRequest() {
-            masterPresenceData.clear();
-            processedFileNames.clear();
-            fileInput.value = '';
-            rankedListContainer.innerHTML = '';
-            fileListDisplay.textContent = 'Nenhum arquivo processado nesta sessão.';
-            processBtn.disabled = true;
-            emptyState.style.display = 'block';
-            showMessage("Tudo limpo! Pronto para começar de novo.", false);
-        }
-
-        async function handleProcessRequest() {
-            const newFilesToProcess = Array.from(fileInput.files).filter(file => !processedFileNames.has(file.name));
-            if (newFilesToProcess.length === 0) {
-                showMessage("Aviso: Todos os arquivos selecionados já foram processados.", true, "orange");
-                return;
-            }
-
+        async function initializeAndProcessData() {
             setLoadingState(true);
-            await new Promise(resolve => setTimeout(resolve, 50));
 
             try {
-                const fileContents = await Promise.all(newFilesToProcess.map(readFileAsync));
+                // Lê todos os arquivos CSV listados acima
+                const fileContents = await Promise.all(
+                    csvFilePaths.map(path => fetch(encodeURI(path)).then(response => { // CORREÇÃO: Adicionado encodeURI para lidar com espaços nos nomes dos arquivos.
+                        if (!response.ok) {
+                            throw new Error(`Não foi possível encontrar o arquivo: ${path}. Verifique se o nome do arquivo está correto e se ele foi enviado para o GitHub.`);
+                        }
+                        return response.text();
+                    }))
+                );
                 
+                // Processa o conteúdo de cada arquivo
                 fileContents.forEach(content => parseCsvContent(content));
-
-                newFilesToProcess.forEach(file => processedFileNames.add(file.name));
-                fileListDisplay.textContent = `Processados: ${[...processedFileNames].join(', ')}`;
                 
                 if (masterPresenceData.size === 0) {
-                    showMessage("Nenhum dado de presença válido foi encontrado.", true);
+                    alert("Nenhum dado de presença válido foi encontrado nos arquivos. Verifique os nomes dos arquivos no código.");
                 } else {
                     displayRankedList();
-                    showMessage(`${newFilesToProcess.length} novo(s) arquivo(s) processado(s)!`, false);
                 }
             } catch (error) {
-                console.error("Error processing files:", error);
-                showMessage("Ocorreu um erro ao ler um dos arquivos.", true);
+                console.error("Erro ao processar arquivos:", error);
+                alert(error.message);
             } finally {
                 setLoadingState(false);
             }
@@ -202,15 +133,10 @@
                 .map(([name, presences]) => ({ name, presences }))
                 .sort((a, b) => b.presences - a.presences);
 
-            emptyState.style.display = 'none';
             rankedListContainer.innerHTML = '';
             
             rankedData.forEach((person, index) => {
-                // --- LÓGICA DE AVATAR SUBSTITUÍDA E SIMPLIFICADA ---
-                // Gera uma URL única do RoboHash para cada nome.
-                // encodeURIComponent garante que nomes com espaços ou caracteres especiais funcionem.
                 const avatarUrl = `https://robohash.org/${encodeURIComponent(person.name)}.png?set=set1`;
-
                 const card = document.createElement('div');
                 card.style.setProperty('--i', index);
                 card.className = 'card bg-white rounded-xl shadow-lg p-5 flex items-center space-x-4';
@@ -245,40 +171,8 @@
         function setLoadingState(isLoading) {
             loadingSpinner.style.display = isLoading ? 'flex' : 'none';
             if (isLoading) {
-                emptyState.style.display = 'none';
                 rankedListContainer.innerHTML = '';
             }
-            processBtn.disabled = isLoading;
-            resetBtn.disabled = isLoading;
-        }
-
-        function readFileAsync(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
-                reader.readAsText(file);
-            });
-        }
-
-        function showMessage(message, isError = false, color = 'green') {
-            let existingBox = document.getElementById('message-box');
-            if (existingBox) existingBox.remove();
-            
-            const messageBox = document.createElement('div');
-            messageBox.id = 'message-box';
-            let bgColor = 'bg-green-500';
-            if(isError) bgColor = color === 'orange' ? 'bg-orange-500' : 'bg-red-500';
-
-            messageBox.className = `fixed top-5 right-5 ${bgColor} text-white py-3 px-5 rounded-lg shadow-xl animate-fade-in-out z-50`;
-            messageBox.textContent = message;
-            
-            document.body.appendChild(messageBox);
-            setTimeout(() => {
-                if (document.body.contains(messageBox)) {
-                    document.body.removeChild(messageBox);
-                }
-            }, 4000);
         }
     </script>
 </body>
